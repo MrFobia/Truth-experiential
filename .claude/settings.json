@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -L \"https://commons.wikimedia.org/wiki/File:Takis_logo.svg\")",
+      "Bash(curl -s -L \"https://www.barcel.com.mx\")",
+      "Bash(curl -s -L -A \"Mozilla/5.0\" \"https://elriogrande.com\")",
+      "Bash(curl -s -L -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36\" \"https://libertytax.com\")",
+      "Bash(curl -s -L -H 'Accept: text/html,application/xhtml+xml' -H 'User-Agent: Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36' https://libertytax.com)",
+      "Bash(curl -s -L -H 'User-Agent: Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36' https://elriogrande.com)",
+      "Bash(curl -s -L -H 'User-Agent: Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36' https://libertytax.com)"
+    ]
+  }
+}
