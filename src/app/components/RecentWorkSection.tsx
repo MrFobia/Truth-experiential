@@ -1,10 +1,12 @@
 import { useRef, useState, useCallback } from "react";
+import { Link } from "react-router";
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "motion/react";
 import { AnimatedSection } from "./AnimatedSection";
-import imgUrbanMusic from "figma:asset/72d5143b59aca6a252f105769f282767f825563c.png";
-import imgGuerrilla from "figma:asset/c68a082d14a52f51bdee72313afb87a0cba6cb7c.png";
-import imgArenaBrand from "figma:asset/ed776bb7e8812966cee11f81432de5b02c8ca1d5.png";
-import imgCommunity from "figma:asset/8af3d1c873fa74ecfe44a06409ba8519daf56674.png";
+import { Picture } from "./Picture";
+import imgUrbanMusic from "figma:asset/72d5143b59aca6a252f105769f282767f825563c.webp";
+import imgGuerrilla from "figma:asset/c68a082d14a52f51bdee72313afb87a0cba6cb7c.webp";
+import imgArenaBrand from "figma:asset/ed776bb7e8812966cee11f81432de5b02c8ca1d5.webp";
+import imgCommunity from "figma:asset/8af3d1c873fa74ecfe44a06409ba8519daf56674.webp";
 
 import { ProjectOffcanvas, projectsData } from "./ProjectOffcanvas";
 
@@ -151,8 +153,8 @@ function FullWidthProject({
       }}
     >
       {/* Background image with parallax + zoom — full-bleed static block on mobile, absolute cover on desktop */}
-      <motion.img
-        src={image}
+      <Picture
+        webp={image}
         alt={`${title} ${subtitle} — ${description}`}
         className="md:absolute md:inset-0 w-full h-[110%] max-md:h-[85vw] max-md:relative object-cover transition-transform duration-700"
         style={{ y: imgY, scale: isHovered ? 1.05 : 1 }}
@@ -200,14 +202,18 @@ function FullWidthProject({
               </p>
             </div>
 
-            {/* Right: Stat + View case CTA */}
+            {/* Right: Stat + View case CTA — T090, real /work/[slug] link */}
             <div className="flex items-center gap-4 shrink-0">
               <span className="font-['Poppins',sans-serif] font-medium text-[#968ab6] text-[13px] tracking-[1.3px] uppercase">
                 {stat}
               </span>
-              <span className="font-['Poppins',sans-serif] text-white/40 text-[12px] tracking-[2.4px] uppercase">
+              <Link
+                to={`/work/${projectsData.find((p) => p.id === projectId)?.slug ?? ""}`}
+                onClick={(e) => e.stopPropagation()}
+                className="font-['Poppins',sans-serif] text-white/40 text-[12px] tracking-[2.4px] uppercase hover:text-white/70 transition-colors"
+              >
                 View case
-              </span>
+              </Link>
               <motion.div
                 className="size-12 rounded-full border border-white/20 flex items-center justify-center cursor-pointer"
                 whileHover={{ borderColor: "rgba(150,138,182,0.6)", scale: 1.05 }}
@@ -325,17 +331,16 @@ function SplitProject({
               {statLabel}
             </span>
           </div>
-          <motion.a
-            href="#"
-            onClick={(e) => { e.preventDefault(); onOpen(projectId); }}
-            className="flex items-center gap-2 cursor-pointer"
-            whileHover={{ x: 4 }}
+          {/* T090 — real /work/[slug] link */}
+          <Link
+            to={`/work/${projectsData.find((p) => p.id === projectId)?.slug ?? ""}`}
+            className="flex items-center gap-2 cursor-pointer transition-transform duration-200 hover:translate-x-1"
           >
             <span className="font-['Poppins',sans-serif] text-white/40 text-[12px] tracking-[2.4px] uppercase">
               View Case
             </span>
             <SmallArrowIcon />
-          </motion.a>
+          </Link>
         </div>
       </AnimatedSection>
     </div>
@@ -357,8 +362,8 @@ function SplitProject({
         }
       }}
     >
-      <motion.img
-        src={image}
+      <Picture
+        webp={image}
         alt={`${title} ${subtitle} — ${description}`}
         className="absolute inset-[-20px] w-[calc(100%+40px)] h-[calc(110%+40px)] object-cover transition-transform duration-700"
         style={{ y: imgY, x: imgMouseX, translateY: imgMouseY, scale: isImgHovered ? 1.08 : 1 }}

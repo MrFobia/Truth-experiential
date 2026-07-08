@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
 import heroBanner from "../../assets/hero-banner.avif";
 import svgPaths from "../../imports/svg-8zp67e2zbv";
 
