@@ -1,18 +1,23 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { Link } from "react-router";
 import { motion, AnimatePresence, useInView } from "motion/react";
 
+/* T090 — caseSlug links the quote to its real /work/[slug] case. Liberty Tax
+   has no matching case in projectsData, so it falls back to the #work anchor. */
 const quotes = [
   {
     text: "Truth treats our activations like product launches — every detail engineered, every dollar accounted for, every market measured. The Glass Mobile Truck didn't just earn downloads — it earned a place in the communities we needed to be in.",
     name: "Remitly",
     logo: "/logos/remitly.svg",
     context: "Glass Mobile Truck · Multi-market activation",
+    caseSlug: "remitly-glass-mobile-truck",
   },
   {
     text: "What Truth does that no one else does is treat the room and the spreadsheet with equal respect. The activation moves the audience; the data moves the business.",
     name: "Liberty Tax",
     logo: null,
     context: "Seasonal brand activation",
+    caseSlug: null,
   },
 ];
 
@@ -184,18 +189,16 @@ export function TestimonialSection() {
             ))}
           </div>
 
-          {/* CTA */}
-          <motion.a
-            href="#work"
-            className="inline-flex items-center gap-2 font-['Poppins',sans-serif] text-[14px] text-white/50 tracking-[0.3px] cursor-pointer max-sm:hidden"
-            whileHover={{ color: "rgba(150,138,182,1)" }}
-            transition={{ duration: 0.25 }}
+          {/* CTA — links to the matching case's real /work/[slug] page when one exists */}
+          <Link
+            to={quote.caseSlug ? `/work/${quote.caseSlug}` : "/#work"}
+            className="inline-flex items-center gap-2 font-['Poppins',sans-serif] text-[14px] text-white/50 tracking-[0.3px] cursor-pointer max-sm:hidden hover:text-[#968ab6] transition-colors"
           >
-            <span>View case studies</span>
+            <span>{quote.caseSlug ? "View this case" : "View case studies"}</span>
             <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
               →
             </motion.span>
-          </motion.a>
+          </Link>
         </motion.div>
       </div>
     </section>

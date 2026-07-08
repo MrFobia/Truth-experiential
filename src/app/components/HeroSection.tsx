@@ -55,11 +55,20 @@ export function HeroSection() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  /* Rotate hero H1 word set every ~3s, paused under reduced motion */
+  /* T002/T080 — rotate hero H1 word set every ~3s, paused under reduced motion.
+     Crossfades in place (same DOM node, style-only tween) instead of unmount/
+     remount via AnimatePresence+key: a full remount every 3s forever kept
+     re-triggering a new LCP paint candidate on the page's largest element,
+     so Lighthouse's LCP metric never settled (measured ~23s). */
+  const [wordsVisible, setWordsVisible] = useState(true);
   useEffect(() => {
     if (prefersReducedMotion) return;
     const id = setInterval(() => {
-      setWordIndex((i) => (i + 1) % ROTATING_WORDS.length);
+      setWordsVisible(false);
+      setTimeout(() => {
+        setWordIndex((i) => (i + 1) % ROTATING_WORDS.length);
+        setWordsVisible(true);
+      }, 400);
     }, 3000);
     return () => clearInterval(id);
   }, [prefersReducedMotion]);
@@ -175,30 +184,22 @@ export function HeroSection() {
           Where culture becomes a moment.
         </motion.p>
 
-        <div className="overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.h1
-              key={`line1-${wordIndex}`}
-              className="font-['Fustat',sans-serif] text-white text-[clamp(40px,10vw,140px)] leading-[0.9] tracking-[-0.03em] font-extrabold"
-              initial={{ y: 60, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -60, opacity: 0 }}
-              transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >{line1}</motion.h1>
-          </AnimatePresence>
-        </div>
-        <div className="overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.h1
-              key={`line2-${wordIndex}`}
-              className="font-['Sofia_Sans_Condensed',sans-serif] italic text-[#968ab6] text-[clamp(40px,10vw,140px)] leading-[0.9] tracking-[-0.03em] font-bold"
-              initial={{ y: 60, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -60, opacity: 0 }}
-              transition={{ duration: 0.5, delay: 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >{line2}</motion.h1>
-          </AnimatePresence>
-        </div>
+        <h1 className="leading-[0.9]">
+          <div className="overflow-hidden">
+            <motion.span
+              className="block font-['Fustat',sans-serif] text-white text-[clamp(40px,10vw,140px)] leading-[0.9] tracking-[-0.03em] font-extrabold"
+              animate={{ y: wordsVisible ? 0 : -60, opacity: wordsVisible ? 1 : 0 }}
+              transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >{line1}</motion.span>
+          </div>
+          <div className="overflow-hidden">
+            <motion.span
+              className="block font-['Sofia_Sans_Condensed',sans-serif] italic text-[#968ab6] text-[clamp(40px,10vw,140px)] leading-[0.9] tracking-[-0.03em] font-bold"
+              animate={{ y: wordsVisible ? 0 : -60, opacity: wordsVisible ? 1 : 0 }}
+              transition={{ duration: 0.4, delay: wordsVisible ? 0.08 : 0, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >{line2}</motion.span>
+          </div>
+        </h1>
 
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mt-12 gap-8">
           <motion.p

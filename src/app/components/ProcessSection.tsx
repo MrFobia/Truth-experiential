@@ -32,10 +32,16 @@ const steps = [
 const TOTAL_PAGES = 3;
 
 /* ─── Process Card ─── */
-function ProcessCard({ step }: { step: (typeof steps)[0] }) {
+function ProcessCard({
+  step,
+  className = "shrink-0 w-[520px] h-full max-lg:w-[75vw]",
+}: {
+  step: (typeof steps)[0];
+  className?: string;
+}) {
   return (
     <motion.div
-      className="relative overflow-hidden rounded-2xl shrink-0 group cursor-pointer w-[520px] h-full max-lg:w-[75vw]"
+      className={`relative overflow-hidden rounded-2xl group cursor-pointer ${className}`}
       whileHover={{ scale: 0.98 }}
       transition={{ duration: 0.4 }}
     >
@@ -331,8 +337,8 @@ export function ProcessSection() {
           </AnimatedSection>
         </div>
 
-        {/* Controls */}
-        <div className="flex items-center justify-between mt-6 max-w-[719px] ml-auto max-lg:max-w-full">
+        {/* Controls — desktop carousel only */}
+        <div className="hidden lg:flex items-center justify-between mt-6 max-w-[719px] ml-auto">
           <DotIndicators activeIndex={activeIndex} />
           <div className="flex items-center gap-2">
             <ArrowButton direction="left" onClick={goPrev} />
@@ -341,11 +347,11 @@ export function ProcessSection() {
         </div>
       </div>
 
-      {/* ─── Carousel track ─── */}
-      <div className="shrink-0 relative overflow-hidden h-[690px]">
+      {/* ─── Carousel track — desktop/tablet ─── */}
+      <div className="hidden lg:block shrink-0 relative overflow-hidden h-[690px]">
         <motion.div
           ref={trackRef}
-          className="absolute bottom-[50px] left-0 flex items-end gap-[30px] pl-10 pr-10 h-[calc(100%-50px)] max-lg:pl-4 max-lg:pr-4 max-lg:gap-4"
+          className="absolute bottom-[50px] left-0 flex items-end gap-[30px] pl-10 pr-10 h-[calc(100%-50px)]"
           animate={{ x: xState }}
           transition={{ type: "tween", duration: 0.15, ease: "easeOut" }}
         >
@@ -356,6 +362,17 @@ export function ProcessSection() {
             />
           ))}
         </motion.div>
+      </div>
+
+      {/* ─── T022 — mobile: 1-up stack, 16px gap, no carousel ─── */}
+      <div className="lg:hidden flex flex-col gap-4 px-6 pb-16">
+        {steps.map((step) => (
+          <ProcessCard
+            key={step.num}
+            step={step}
+            className="w-full h-[480px]"
+          />
+        ))}
       </div>
     </section>
   );

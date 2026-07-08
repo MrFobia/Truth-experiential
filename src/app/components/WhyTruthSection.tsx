@@ -407,6 +407,7 @@ function ReasonRow({
 
 export function WhyTruthSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const sectionInView = useInView(sectionRef, { margin: "-20%" });
   const [activeReason, setActiveReason] = useState(0);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -443,13 +444,18 @@ export function WhyTruthSection() {
   const headingY = useTransform(scrollYProgress, [0, 0.5], [60, 0]);
   const headingOpacity = useTransform(scrollYProgress, [0, 0.25], [0, 1]);
 
-  // Auto-cycle reasons
+  // Auto-cycle reasons — only while the section is actually on screen.
+  // Running unconditionally from mount kept this section's AnimatePresence
+  // remounts firing forever, which (like T080's hero rotation) never let
+  // Lighthouse's LCP trace reach a quiet window even though the section is
+  // below the fold — the JS was still resetting every 5s from load.
   useEffect(() => {
+    if (!sectionInView) return;
     const timer = setInterval(() => {
       setActiveReason((prev) => (prev + 1) % reasons.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [activeReason]);
+  }, [sectionInView]);
 
   return (
     <section

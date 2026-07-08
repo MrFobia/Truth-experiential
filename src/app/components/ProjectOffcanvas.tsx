@@ -10,6 +10,7 @@ import imgBufalo from "figma:asset/8af3d1c873fa74ecfe44a06409ba8519daf56674.png"
 /* ─── Project data ─── */
 export interface ProjectData {
   id: string;
+  slug: string;
   category: string;
   heroImage: string;
   title: string;
@@ -29,6 +30,7 @@ export interface ProjectData {
 export const projectsData: ProjectData[] = [
   {
     id: "project1",
+    slug: "remitly-glass-mobile-truck",
     category: "Fintech \u00b7 Mobile activation",
     heroImage: imgRemitly,
     title: "Remitly Glass Mobile Truck",
@@ -43,6 +45,7 @@ export const projectsData: ProjectData[] = [
   },
   {
     id: "project2",
+    slug: "los-tigres-del-norte-pizza-patron",
     category: "Music \u00b7 Cultural moment",
     heroImage: imgPizzaPatron,
     title: "Los Tigres del Norte for Pizza Patr\u00f3n",
@@ -58,6 +61,7 @@ export const projectsData: ProjectData[] = [
   },
   {
     id: "project3",
+    slug: "takis-nitro-nfl",
     category: "Sports \u00b7 Sampling at scale",
     heroImage: imgTakis,
     title: "Takis Nitro at the NFL",
@@ -72,6 +76,7 @@ export const projectsData: ProjectData[] = [
   },
   {
     id: "project4",
+    slug: "bufalo-vr-drums-experience",
     category: "Immersive tech \u00b7 Festival",
     heroImage: imgBufalo,
     title: "B\u00fafalo VR Drums Experience",
