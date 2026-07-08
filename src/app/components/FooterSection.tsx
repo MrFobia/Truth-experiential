@@ -79,7 +79,7 @@ function FooterLink({ label }: { label: string }) {
   return (
     <motion.a
       href="#"
-      className="block text-white/60 text-[14px] font-['Poppins',sans-serif] leading-[1.5] cursor-pointer"
+      className="block w-fit text-white/60 text-[14px] font-['Poppins',sans-serif] leading-[1.5] cursor-pointer underline decoration-transparent decoration-2 underline-offset-4 hover:decoration-[#072ACB] transition-[color,text-decoration-color]"
       whileHover={{ x: 4, color: "rgba(255,255,255,0.9)" }}
       transition={{ duration: 0.2 }}
     >
@@ -147,8 +147,8 @@ function ContactForm() {
             <div>
               <motion.button
                 type="submit"
-                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#7a6fa0] text-white text-[13px] font-['Poppins',sans-serif] font-semibold tracking-[0.5px] cursor-pointer"
-                whileHover={{ scale: 1.04, boxShadow: "0 0 28px rgba(150,138,182,0.35)" }}
+                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#072ACB] text-white text-[13px] font-['Poppins',sans-serif] font-semibold tracking-[0.5px] cursor-pointer"
+                whileHover={{ scale: 1.04, boxShadow: "0 0 28px rgba(7,42,203,0.45)" }}
                 whileTap={{ scale: 0.97 }}
               >
                 Send →
@@ -240,7 +240,7 @@ export function FooterSection() {
                 className="flex items-start gap-2.5 group cursor-pointer"
               >
                 <MessageCircle size={13} className="text-[#968ab6] shrink-0 mt-0.5" />
-                <span className="font-['Poppins',sans-serif] text-[13px] text-white/60 group-hover:text-white/90 transition-colors">
+                <span className="font-['Poppins',sans-serif] text-[13px] text-white/60 underline decoration-transparent decoration-2 underline-offset-4 group-hover:text-white/90 group-hover:decoration-[#072ACB] transition-[color,text-decoration-color]">
                   Chat on WhatsApp
                 </span>
               </a>
@@ -331,7 +331,7 @@ export function FooterSection() {
               <a
                 key={l}
                 href="#"
-                className="font-['Poppins',sans-serif] text-[12px] text-white/50 hover:text-white/60 transition-colors cursor-pointer"
+                className="font-['Poppins',sans-serif] text-[12px] text-white/50 underline decoration-transparent decoration-2 underline-offset-4 hover:text-white/60 hover:decoration-[#072ACB] transition-[color,text-decoration-color] cursor-pointer"
               >
                 {l}
               </a>
