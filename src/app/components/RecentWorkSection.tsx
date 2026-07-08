@@ -133,7 +133,7 @@ function FullWidthProject({
       role="button"
       tabIndex={0}
       aria-label={`View case study: ${title} ${subtitle} for ${brand}`}
-      className="relative w-full h-[clamp(600px,63vw,972px)] overflow-hidden cursor-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#968ab6]"
+      className="relative w-full h-[clamp(600px,63vw,972px)] max-md:h-auto max-md:flex max-md:flex-col overflow-hidden cursor-none max-md:cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#968ab6]"
       onMouseMove={(e) => {
         onCursorMove(e);
         setIsHovered(true);
@@ -150,19 +150,19 @@ function FullWidthProject({
         }
       }}
     >
-      {/* Background image with parallax + zoom */}
+      {/* Background image with parallax + zoom — full-bleed static block on mobile, absolute cover on desktop */}
       <motion.img
         src={image}
         alt={`${title} ${subtitle} — ${description}`}
-        className="absolute inset-0 w-full h-[110%] object-cover transition-transform duration-700"
+        className="md:absolute md:inset-0 w-full h-[110%] max-md:h-[85vw] max-md:relative object-cover transition-transform duration-700"
         style={{ y: imgY, scale: isHovered ? 1.05 : 1 }}
       />
-      {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10" />
-      <div className="absolute left-0 top-0 w-px h-full bg-gradient-to-b from-transparent via-[rgba(150,138,182,0.4)] to-transparent" />
+      {/* Gradient overlays — desktop only, text sits on the image there */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10 max-md:hidden" />
+      <div className="absolute left-0 top-0 w-px h-full bg-gradient-to-b from-transparent via-[rgba(150,138,182,0.4)] to-transparent max-md:hidden" />
 
-      {/* Content overlay */}
-      <div className="absolute inset-0 flex flex-col justify-end px-[96px] pb-[80px] max-md:px-6 max-md:pb-10">
+      {/* Content — absolute overlay on desktop, reflows below the image on mobile (T033) */}
+      <div className="md:absolute md:inset-0 flex flex-col justify-end px-[96px] pb-[80px] max-md:relative max-md:justify-start max-md:bg-black max-md:px-6 max-md:pt-6 max-md:pb-10">
         {/* Tag + Year */}
         <AnimatedSection>
           <div className="flex items-center gap-4 mb-4">
