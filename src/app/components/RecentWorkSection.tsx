@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "motion/react";
 import { AnimatedSection } from "./AnimatedSection";
 import { Picture } from "./Picture";
@@ -8,7 +8,7 @@ import imgGuerrilla from "figma:asset/c68a082d14a52f51bdee72313afb87a0cba6cb7c.w
 import imgArenaBrand from "figma:asset/ed776bb7e8812966cee11f81432de5b02c8ca1d5.webp";
 import imgCommunity from "figma:asset/8af3d1c873fa74ecfe44a06409ba8519daf56674.webp";
 
-import { ProjectOffcanvas, projectsData } from "./ProjectOffcanvas";
+import { projectsData } from "./ProjectOffcanvas";
 
 /* ─── Custom circular cursor "View Case" ─── */
 function ViewCaseCursor({ x, y, visible }: { x: number; y: number; visible: boolean }) {
@@ -104,7 +104,6 @@ function FullWidthProject({
   stat,
   number,
   projectId,
-  onOpen,
   cursorPos,
   onCursorMove,
   onCursorLeave,
@@ -119,12 +118,13 @@ function FullWidthProject({
   stat: string;
   number: string;
   projectId: string;
-  onOpen: (id: string) => void;
   cursorPos: { x: number; y: number; visible: boolean };
   onCursorMove: (e: React.MouseEvent) => void;
   onCursorLeave: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const slug = projectsData.find((p) => p.id === projectId)?.slug ?? "";
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const imgY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
   const [isHovered, setIsHovered] = useState(false);
@@ -144,11 +144,11 @@ function FullWidthProject({
         onCursorLeave();
         setIsHovered(false);
       }}
-      onClick={() => onOpen(projectId)}
+      onClick={() => navigate(`/work/${slug}`)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          onOpen(projectId);
+          navigate(`/work/${slug}`);
         }
       }}
     >
@@ -202,13 +202,13 @@ function FullWidthProject({
               </p>
             </div>
 
-            {/* Right: Stat + View case CTA — T090, real /work/[slug] link */}
+            {/* Right: Stat + View case CTA */}
             <div className="flex items-center gap-4 shrink-0">
               <span className="font-['Poppins',sans-serif] font-medium text-[#968ab6] text-[13px] tracking-[1.3px] uppercase">
                 {stat}
               </span>
               <Link
-                to={`/work/${projectsData.find((p) => p.id === projectId)?.slug ?? ""}`}
+                to={`/work/${slug}`}
                 onClick={(e) => e.stopPropagation()}
                 className="font-['Poppins',sans-serif] text-white/40 text-[12px] tracking-[2.4px] uppercase hover:text-white/70 transition-colors"
               >
@@ -250,7 +250,6 @@ function SplitProject({
   number,
   reversed,
   projectId,
-  onOpen,
   onCursorMove,
   onCursorLeave,
 }: {
@@ -264,11 +263,12 @@ function SplitProject({
   number: string;
   reversed?: boolean;
   projectId: string;
-  onOpen: (id: string) => void;
   onCursorMove: (e: React.MouseEvent) => void;
   onCursorLeave: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const slug = projectsData.find((p) => p.id === projectId)?.slug ?? "";
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const imgY = useTransform(scrollYProgress, [0, 1], ["-3%", "3%"]);
   const [isImgHovered, setIsImgHovered] = useState(false);
@@ -331,9 +331,8 @@ function SplitProject({
               {statLabel}
             </span>
           </div>
-          {/* T090 — real /work/[slug] link */}
           <Link
-            to={`/work/${projectsData.find((p) => p.id === projectId)?.slug ?? ""}`}
+            to={`/work/${slug}`}
             className="flex items-center gap-2 cursor-pointer transition-transform duration-200 hover:translate-x-1"
           >
             <span className="font-['Poppins',sans-serif] text-white/40 text-[12px] tracking-[2.4px] uppercase">
@@ -354,11 +353,11 @@ function SplitProject({
       className="relative w-full lg:w-[58%] h-[600px] lg:h-[800px] overflow-hidden cursor-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#968ab6]"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onClick={() => onOpen(projectId)}
+      onClick={() => navigate(`/work/${slug}`)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          onOpen(projectId);
+          navigate(`/work/${slug}`);
         }
       }}
     >
@@ -405,7 +404,6 @@ function SplitProject({
    ═══════════════════════════════════════════════════ */
 export function RecentWorkSection() {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0, visible: false });
-  const [openProjectId, setOpenProjectId] = useState("");
 
   const handleCursorMove = (e: React.MouseEvent) => {
     setCursorPos({ x: e.clientX, y: e.clientY, visible: true });
@@ -413,10 +411,6 @@ export function RecentWorkSection() {
 
   const handleCursorLeave = () => {
     setCursorPos({ x: 0, y: 0, visible: false });
-  };
-
-  const handleOpenProject = (id: string) => {
-    setOpenProjectId(id);
   };
 
   return (
@@ -439,13 +433,11 @@ export function RecentWorkSection() {
         stat="3,311 App Downloads"
         number="01"
         projectId="project1"
-        onOpen={handleOpenProject}
         cursorPos={cursorPos}
         onCursorMove={handleCursorMove}
         onCursorLeave={handleCursorLeave}
       />
 
-      {/* Case 02 — Pizza Patron / Los Tigres del Norte (split: image left, text right) */}
       <SplitProject
         image={imgGuerrilla}
         tag="Music · Cultural moment"
@@ -456,12 +448,10 @@ export function RecentWorkSection() {
         statLabel="17,258 Attendees"
         number="02"
         projectId="project2"
-        onOpen={handleOpenProject}
         onCursorMove={handleCursorMove}
         onCursorLeave={handleCursorLeave}
       />
 
-      {/* Case 03 — Takis Nitro / NFL Launch (split: text left, image right) */}
       <SplitProject
         image={imgArenaBrand}
         tag="Sports · Sampling at scale"
@@ -473,12 +463,10 @@ export function RecentWorkSection() {
         number="03"
         reversed
         projectId="project3"
-        onOpen={handleOpenProject}
         onCursorMove={handleCursorMove}
         onCursorLeave={handleCursorLeave}
       />
 
-      {/* Case 04 — Búfalo VR Drums Experience (full-width) */}
       <FullWidthProject
         image={imgCommunity}
         tag="Immersive tech · Festival"
@@ -490,26 +478,12 @@ export function RecentWorkSection() {
         stat="50K+ Per Show"
         number="04"
         projectId="project4"
-        onOpen={handleOpenProject}
         cursorPos={cursorPos}
         onCursorMove={handleCursorMove}
         onCursorLeave={handleCursorLeave}
       />
 
-      {/* Custom cursor */}
       <ViewCaseCursor x={cursorPos.x} y={cursorPos.y} visible={cursorPos.visible} />
-
-      {/* Project Offcanvas */}
-      <ProjectOffcanvas
-        projectId={openProjectId}
-        onClose={() => setOpenProjectId("")}
-        onNavigate={(dir) => {
-          const ids = ["project1", "project2", "project3", "project4"];
-          const idx = ids.indexOf(openProjectId);
-          if (dir === "next") setOpenProjectId(ids[(idx + 1) % ids.length]);
-          else setOpenProjectId(ids[(idx - 1 + ids.length) % ids.length]);
-        }}
-      />
     </section>
   );
 }

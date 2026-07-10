@@ -39,27 +39,14 @@ function Dot() {
 }
 
 export function BrandMarquee() {
-  const [paused, setPaused] = useState(false);
-
   return (
     <section
       className="overflow-hidden border-y border-white/10 pt-4 pb-5"
       style={{ backgroundColor: "#968AB6" }}
     >
-      <div className="flex items-center justify-center gap-3 mb-4">
-        <p className="text-center font-['Poppins',sans-serif] text-[11px] font-semibold tracking-[3px] uppercase text-white/60">
-          Trusted by industry leaders.
-        </p>
-        {/* T017 — keyboard-reachable pause control for the marquee */}
-        <button
-          type="button"
-          onClick={() => setPaused((p) => !p)}
-          aria-label={paused ? "Play logo marquee" : "Pause logo marquee"}
-          className="text-white/70 hover:text-white text-[11px] font-semibold tracking-[1px] uppercase border border-white/30 rounded-full px-2.5 py-0.5 cursor-pointer"
-        >
-          {paused ? "Play" : "Pause"}
-        </button>
-      </div>
+      <p className="text-center font-['Inter',sans-serif] text-[11px] font-semibold tracking-[3px] uppercase text-white/60 mb-4">
+        Trusted by industry leaders.
+      </p>
 
       {/*
         CSS marquee:
@@ -89,7 +76,7 @@ export function BrandMarquee() {
       `}</style>
 
       <div className="marquee-wrap overflow-hidden">
-        <div className="marquee-track" style={{ animationPlayState: paused ? "paused" : "running" }}>
+        <div className="marquee-track">
           {/* Set A */}
           <div className="marquee-set-a" style={{ display: "flex", alignItems: "center" }}>
             {brands.map((brand) => (

@@ -3,14 +3,18 @@ import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
 import heroBanner from "../../assets/hero-banner.avif";
 import svgPaths from "../../imports/svg-8zp67e2zbv";
 
+const VIDEO_ID = "nOvG2vvTn04";
+
 const YT_EMBED =
-  "https://www.youtube.com/embed/TbAqxZDOQwE" +
+  `https://www.youtube.com/embed/${VIDEO_ID}` +
   "?autoplay=1&rel=0&modestbranding=1&playsinline=1";
 
-/* T001 — externally hosted, muted, looping background reel */
-const BG_VIDEO_EMBED =
-  "https://www.youtube.com/embed/TbAqxZDOQwE" +
-  "?autoplay=1&mute=1&loop=1&playlist=TbAqxZDOQwE&controls=0&rel=0&modestbranding=1&playsinline=1&disablekb=1";
+declare global {
+  interface Window {
+    YT: any;
+    onYouTubeIframeAPIReady: () => void;
+  }
+}
 
 /* T002 — dynamic rotating hero H1 */
 const ROTATING_WORDS: [string, string][] = [
@@ -21,6 +25,7 @@ const ROTATING_WORDS: [string, string][] = [
 
 export function HeroSection() {
   const ref = useRef<HTMLDivElement>(null);
+  const ytPlayerRef = useRef<any>(null);
   const [reelOpen, setReelOpen] = useState(false);
   const [wordIndex, setWordIndex] = useState(0);
   const [videoPlaying, setVideoPlaying] = useState(true);
@@ -42,18 +47,53 @@ export function HeroSection() {
     return () => document.removeEventListener("keydown", onKey);
   }, [reelOpen]);
 
-  /* prefers-reduced-motion: freeze rotation + fall back to poster instead of looping video */
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReducedMotion(mq.matches);
-    setVideoPlaying(!mq.matches);
+    const reduced = mq.matches;
+    setPrefersReducedMotion(reduced);
+    if (reduced) setVideoPlaying(false);
     const onChange = (e: MediaQueryListEvent) => {
       setPrefersReducedMotion(e.matches);
-      setVideoPlaying(!e.matches);
+      if (e.matches) setVideoPlaying(false);
     };
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
   }, []);
+
+  /* Load YouTube IFrame API and init background player */
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    const initPlayer = () => {
+      if (ytPlayerRef.current) return;
+      ytPlayerRef.current = new window.YT.Player("yt-bg-player", {
+        videoId: VIDEO_ID,
+        playerVars: {
+          autoplay: 1, mute: 1, loop: 1,
+          playlist: VIDEO_ID,
+          controls: 0, rel: 0, modestbranding: 1,
+          playsinline: 1, disablekb: 1, fs: 0,
+        },
+        events: {
+          onReady: (e: any) => { e.target.mute(); e.target.playVideo(); },
+        },
+      });
+    };
+
+    if (window.YT?.Player) {
+      initPlayer();
+    } else {
+      const prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => { prev?.(); initPlayer(); };
+      if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+        const tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(tag);
+      }
+    }
+
+    return () => { ytPlayerRef.current?.destroy(); ytPlayerRef.current = null; };
+  }, [prefersReducedMotion]);
 
   /* T002/T080 — rotate hero H1 word set every ~3s, paused under reduced motion.
      Crossfades in place (same DOM node, style-only tween) instead of unmount/
@@ -77,47 +117,35 @@ export function HeroSection() {
 
   return (
     <section ref={ref} className="relative h-screen w-full overflow-hidden bg-black">
-      {/* Background: autoplay/muted/loop video, poster fallback for reduced motion */}
+      {/* Background: YouTube IFrame API player (muted autoplay loop) */}
       <motion.div className="absolute inset-0 overflow-hidden" style={{ y: bgY }}>
-        {videoPlaying ? (
-          // object-fit/object-position don't apply to <iframe> — force "cover" by
-          // oversizing the iframe off a 16:9 ratio and centering it, like a video tag would.
-          <iframe
-            src={BG_VIDEO_EMBED}
-            title=""
-            aria-hidden="true"
-            tabIndex={-1}
-            allow="autoplay; encrypted-media"
-            className="absolute top-1/2 left-1/2 opacity-50 pointer-events-none"
-            style={{
-              border: "none",
-              width: "100vw",
-              height: "56.25vw", // 16:9 from width
-              minWidth: "177.78vh", // 16:9 from height
-              minHeight: "100vh",
-              transform: "translate(-50%, -50%) scale(1.3)",
-            }}
-          />
-        ) : (
-          <img
-            src={heroBanner}
-            alt=""
-            fetchPriority="high"
-            className="w-full h-[130%] object-cover opacity-50"
-            style={{ objectPosition: "center 35%" }}
-          />
-        )}
+        {/* YT API mounts into this div — always in DOM so the player isn't destroyed */}
+        <div
+          id="yt-bg-player"
+          aria-hidden="true"
+          className="absolute top-1/2 left-1/2 pointer-events-none"
+          style={{
+            width: "100vw",
+            height: "56.25vw",
+            minWidth: "177.78vh",
+            minHeight: "100vh",
+            transform: "translate(-50%, -50%) scale(1.3)",
+            opacity: videoPlaying ? 0.5 : 0,
+            transition: "opacity 0.6s",
+          }}
+        />
+        {/* Poster shown when video is paused or reduced-motion */}
+        <img
+          src={heroBanner}
+          alt=""
+          fetchPriority="high"
+          className="w-full h-[130%] object-cover transition-opacity duration-700"
+          style={{
+            objectPosition: "center 35%",
+            opacity: videoPlaying ? 0 : 0.5,
+          }}
+        />
       </motion.div>
-
-      {/* T001 — keyboard-reachable play/pause for the background reel */}
-      <button
-        type="button"
-        onClick={() => setVideoPlaying((p) => !p)}
-        aria-label={videoPlaying ? "Pause background video" : "Play background video"}
-        className="absolute top-6 right-6 z-20 w-10 h-10 rounded-full border border-white/20 bg-black/30 backdrop-blur-sm flex items-center justify-center text-white/70 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#968ab6]"
-      >
-        {videoPlaying ? "❚❚" : "▶"}
-      </button>
 
       {/* Gradient Overlays */}
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20" />
@@ -185,14 +213,14 @@ export function HeroSection() {
         </motion.p>
 
         <h1 className="leading-[0.9]">
-          <div className="overflow-hidden">
+          <div className="overflow-hidden pb-[0.18em]">
             <motion.span
               className="block font-['Fustat',sans-serif] text-white text-[clamp(40px,10vw,140px)] leading-[0.9] tracking-[-0.03em] font-extrabold"
               animate={{ y: wordsVisible ? 0 : -60, opacity: wordsVisible ? 1 : 0 }}
               transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
             >{line1}</motion.span>
           </div>
-          <div className="overflow-hidden">
+          <div className="overflow-hidden pb-[0.18em]">
             <motion.span
               className="block font-['Sofia_Sans_Condensed',sans-serif] italic text-[#968ab6] text-[clamp(40px,10vw,140px)] leading-[0.9] tracking-[-0.03em] font-bold"
               animate={{ y: wordsVisible ? 0 : -60, opacity: wordsVisible ? 1 : 0 }}
@@ -243,6 +271,26 @@ export function HeroSection() {
               <span className="text-white/60 text-[13px] tracking-[1.3px] uppercase font-['Poppins',sans-serif] group-hover:text-white transition-colors">
                 Watch the Reel
               </span>
+            </motion.button>
+
+            {/* Video pause/play */}
+            <motion.button
+              type="button"
+              onClick={() => {
+                const next = !videoPlaying;
+                setVideoPlaying(next);
+                if (next) ytPlayerRef.current?.playVideo();
+                else ytPlayerRef.current?.pauseVideo();
+              }}
+              aria-label={videoPlaying ? "Pause background video" : "Play background video"}
+              className="w-12 h-12 rounded-full border border-white/20 bg-black/20 flex items-center justify-center text-white/60 hover:text-white hover:border-white/40 transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#968ab6]"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {videoPlaying
+                ? <span className="text-[10px] tracking-widest">❚❚</span>
+                : <span className="text-[12px]">▶</span>
+              }
             </motion.button>
           </motion.div>
         </div>

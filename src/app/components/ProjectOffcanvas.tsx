@@ -23,6 +23,12 @@ export interface ProjectData {
     description: string;
     image: string;
   }[];
+  challenge?: string;
+  approach?: string;
+  outcomes?: string;
+  year?: string;
+  client?: string;
+  services?: string[];
 }
 
 /* Only facts already confirmed in the feedback tracker / RecentWorkSection \u2014
@@ -42,6 +48,15 @@ export const projectsData: ProjectData[] = [
       { value: "4.17M+", label: "Impressions" },
     ],
     deliverables: [],
+    year: "2024",
+    client: "Remitly",
+    services: ["Experiential Design", "Mobile Tour", "Street-Level Activation"],
+    challenge:
+      "Remitly needed to build trust with Latino immigrant communities in Dallas, Houston, and San Antonio \u2014 a demographic historically skeptical of digital financial services. Traditional media wasn't cutting through. They needed to show up where people actually were.",
+    approach:
+      "We designed a fully transparent mobile truck \u2014 glass walls, open floor plan, no hidden corners \u2014 as a literal metaphor for the brand's promise of transparency. Brand ambassadors guided app sign-ups in-person, in Spanish, in the neighborhoods where the community already gathered. The truck ran through a hurricane and still hit every market date.",
+    outcomes:
+      "3,311 direct app downloads across three cities. 4.17 million total impressions. More than a media buy \u2014 proof that showing up physically, in the right places, with the right message, converts at rates no digital campaign can match.",
   },
   {
     id: "project2",
@@ -58,6 +73,15 @@ export const projectsData: ProjectData[] = [
       { value: "60%", label: "Cost Recovery" },
     ],
     deliverables: [],
+    year: "2023",
+    client: "Pizza Patr\u00f3n",
+    services: ["Talent Booking", "Event Production", "Sponsorship Strategy"],
+    challenge:
+      "Pizza Patr\u00f3n was celebrating 30 years as a brand that grew up alongside the Latino community in Dallas. They needed a moment big enough to honor that history \u2014 something the community would actually want to attend, not just a brand milestone press release.",
+    approach:
+      "We brought in Los Tigres del Norte \u2014 the norte\u00f1o legends who have soundtracked four decades of Mexican-American life \u2014 as the headline act. The event was designed around the community first: free entry, neighborhood venues, family-friendly format. Sponsorships covered 60% of costs, making the economics work for the brand at scale.",
+    outcomes:
+      "17,258 people showed up. Over 500,000 paid media impressions extended the reach beyond the venue. 60% cost recovery through sponsorships proved the model is repeatable. Pizza Patr\u00f3n didn't just celebrate their anniversary \u2014 they threw the neighborhood's party.",
   },
   {
     id: "project3",
@@ -73,6 +97,15 @@ export const projectsData: ProjectData[] = [
       { value: "+20%", label: "Sales Lift" },
     ],
     deliverables: [],
+    year: "2024",
+    client: "Takis (Barcel)",
+    services: ["Sampling Program", "NFL Partnership Activation", "Field Marketing"],
+    challenge:
+      "Takis Nitro was a new product entering a crowded snack category. The brand needed trial at scale \u2014 not just awareness, but actual taste experiences with the right demographic at the right emotional temperature. NFL game days are loud, charged, and exactly where snack decisions happen.",
+    approach:
+      "We built a stadium sampling program across multiple NFL venues, deploying trained brand teams inside the gates during peak foot traffic windows. Product placement was strategic \u2014 entry queues, concourse corridors, tailgate zones \u2014 everywhere fans dwell before the game locks their attention. Every sample came with a QR-to-purchase flow.",
+    outcomes:
+      "480,000+ samples distributed across the season. 20% tracked sales lift in markets where the activation ran. Takis Nitro didn't just launch \u2014 it earned trial from the people most likely to convert.",
   },
   {
     id: "project4",
@@ -88,6 +121,15 @@ export const projectsData: ProjectData[] = [
       { value: "4", label: "Marquee Shows" },
     ],
     deliverables: [],
+    year: "2023",
+    client: "B\u00fafalo (Grupo Herdez)",
+    services: ["VR Experience Design", "Festival Activation", "Immersive Tech"],
+    challenge:
+      "B\u00fafalo, a Mexican hot sauce brand, needed to build an emotional connection with younger consumers at music festivals. A booth with samples wasn't going to cut it. They needed something worth stopping for, worth photographing, worth talking about after the music ended.",
+    approach:
+      "We designed a VR drum experience that put fans behind the kit at a live concert \u2014 their movements synced to actual audio, surrounded by crowd visuals and festival energy. No headset experience had been done at this scale in a Latin music context. The booth became the destination, not an interruption.",
+    outcomes:
+      "50,000+ interactions per show across four marquee festivals. Dwell time averaged 4+ minutes per person \u2014 orders of magnitude above any traditional booth. B\u00fafalo became the brand people talked about after the show.",
   },
 ];
 
